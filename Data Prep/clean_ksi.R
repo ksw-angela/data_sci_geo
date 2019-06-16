@@ -7,6 +7,8 @@ library(tidyverse)
 library(httr)
 library(jsonlite)
 library(rvest)
+library(zoo)
+library(data.table)
 
 base_url <- "https://services.arcgis.com/S9th0jAJ7bqgIRjw/arcgis/rest/services/KSI/FeatureServer/0/query?"
 end_url <- "&outFields=*&outSR=4326&f=json"
@@ -21,19 +23,6 @@ ksi_df <- map_df(ksi_json, ~bind_rows(.x[["features"]]))
 
 rm(ksi_json)
 
-# Clean final KSI dataset
-# 1. Create a single date column
-# 2. Attach the ward and hood name
-# 3. Remove the geometry columns
-# 4. Remove attributes. from column names
-
-# Ward information
-ward_info <- read_html("https://www.toronto.ca/city-government/data-research-maps/neighbourhoods-communities/ward-profiles/") %>%
-  html_node("#js_map--data") %>%
-  html_table() %>%
-  select(`Ward Number`, `Ward Name`) %>%
-  mutate(`Ward Number` = as.character(`Ward Number`))
-
 # Neighborhood information
 hood_info <- fread("https://www.toronto.ca/ext/open_data/catalog/data_set_files/2016_neighbourhood_profiles.csv",
                    nrows = 1) %>%
@@ -41,5 +30,19 @@ hood_info <- fread("https://www.toronto.ca/ext/open_data/catalog/data_set_files/
   gather(`Hood Name`, `Hood Number`) %>%
   mutate(`Hood Number` = as.character(`Hood Number`))
 
+# Clean final KSI dataset
+# 1. Create a single date column
+# 2. Attach hood name
+# 3. Remove the geometry columns
+# 4. Remove 'attributes.' from column names
 ksi <- ksi_df %>%
-  select(-starts_with("geometry"))
+  mutate(Date = as.POSIXct(attributes.DATE/1000, origin = "1970-01-01", tz = "UTC")) %>%
+  mutate(attributes.Hood_ID = as.character(attributes.Hood_ID)) %>%
+  left_join(hood_info, by = c("attributes.Hood_ID" = "Hood Number")) %>%
+  select(-attributes.YEAR, -attributes.DATE, -attributes.TIME, -attributes.Hour,
+         -starts_with("geometry"), -attributes.Ward_ID, -attributes.Ward_Name, 
+         -attributes.Hood_Name, -attributes.ObjectId)
+
+names(ksi) <- gsub(x = names(ksi), pattern = "attributes\\.", replacement = "")
+
+rm(hood_info, ksi_df, base_url, end_url)
