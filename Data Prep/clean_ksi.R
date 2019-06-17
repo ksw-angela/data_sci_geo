@@ -21,7 +21,7 @@ ksi_json <- map(2008:2018,
 # Only require the KSI dataset
 ksi_df <- map_df(ksi_json, ~bind_rows(.x[["features"]]))
 
-rm(ksi_json)
+rm(ksi_json, base_url, end_url)
 
 # Neighborhood information
 hood_info <- fread("https://www.toronto.ca/ext/open_data/catalog/data_set_files/2016_neighbourhood_profiles.csv",
@@ -45,4 +45,4 @@ ksi <- ksi_df %>%
 
 names(ksi) <- gsub(x = names(ksi), pattern = "attributes\\.", replacement = "")
 
-rm(hood_info, ksi_df, base_url, end_url)
+rm(hood_info, ksi_df)
