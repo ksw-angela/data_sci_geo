@@ -55,7 +55,10 @@ weather_df51459 <- map2(years51459, months51459,
 # LegendMM: Missing
 # LegendTT: Trace amounts
 weather <- bind_rows(weather_df5097, weather_df51459) %>%
-  mutate_at(.vars = vars(`Tot Rain`, `Tot Snow`, `Tot Precip`, `Ground Snow`),
-            .funs = funs(gsub("LegendTT", "0", gsub("LegendMM", "", .)))) %>%
-  mutate_at(.vars = vars(`Max Temp`, `Min Temp`, `Mean Temp`),
-            .funs = funs(gsub("LegendEE", "", gsub("LegendMM", "", .))))
+  mutate_at(.vars = vars(-Date),
+            .funs = funs(gsub("LegendEE", "",
+                              gsub("LegendMM", "",
+                                   gsub("LegendTT", "0.0", .)))))
+
+rm(base_url, years5097, years51459, months5097, months51459, 
+   weather_df5097, weather_df51459)
