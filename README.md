@@ -1,6 +1,6 @@
 # Road Safety in Toronto
 
-This is the source code for a Shiny application in R of collisions resulting in serious or fatal accidents in Toronto from 2008-2018. The data is taken directly from the [Toronto Police Service Public Safety Data Portal](http://data.torontopolice.on.ca/datasets/ksi)'s public API. Daily weather data is scraped directly from [Climate Canada](http://climate.weather.gc.ca/historical_data/search_historic_data_e.html)'s website.
+This is the source code for a Shiny application in R of collisions resulting in serious or fatal accidents in Toronto for the last ten years (2008-2018 at time of publishing). The data is taken directly from the [Toronto Police Service Public Safety Data Portal](http://data.torontopolice.on.ca/datasets/ksi)'s public API. Daily weather data is scraped directly from [Climate Canada](http://climate.weather.gc.ca/historical_data/search_historic_data_e.html)'s website.
 
 To run it locally, you'll need to install the latest versions of tidyverse, Shiny, leaflet, plotly, and sp.
 
