@@ -48,7 +48,7 @@ shinyUI(fluidPage(
                            leafletOutput("acc_map"), 
                            dataTableOutput("acc_data"))
                   ,
-                  tabPanel("Frequency Table",
+                  tabPanel("Frequency Tables",
                            plotlyOutput("acc_plot_full"),
                            plotlyOutput("acc_plot_full_prop"),
                            br(),
