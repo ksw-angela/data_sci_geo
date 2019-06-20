@@ -1,10 +1,14 @@
 library(leaflet)
 library(plotly)
+library(rgdal)
+library(zoo)
+library(lubridate)
 
 source("clean_ksi.R")
 source("clean_weather.R")
 
 accidents <- ksi %>%
+  filter(ACCLASS != "Property Damage Only") %>%
   mutate(Date = as.Date(as.POSIXct(Date_Time, "GMT"))) %>%
   left_join(weather, by = c("Date" = "Date")) %>%
   mutate(fatal = if_else(ACCLASS == "Fatal", "Yes", "No"),
@@ -27,8 +31,11 @@ rm(weather, ksi)
 
 ##### LABELS #####
 
+# Number of parties involved in an accident as well as number of fatalities
+per_accident <- accidents %>%
+  group_by(ACCNUM) %>%
+  summarize(parties_involved = n(),
+            num_fatalities = sum(ACCLASS == "Fatal"))
+
 # Color scheme for map
 pal2 <- colorFactor(palette = c('darkorchid', 'darkturquoise'), domain = accidents$ACCLASS)
-
-# Pop-up label for neighborhood
-labs_hood <- paste0('<b>', gsub(" *\\(.*?\\) *", "", neighborhoods$AREA_NAME), '</b>')
