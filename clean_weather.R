@@ -1,21 +1,22 @@
 ### The following script interacts with Climate Canada's website to scrape Toronto's
-### historical daily weather data for 2008-2018;
+### historical daily weather data for 2008 - last year;
 ### For more information refer to: http://climate.weather.gc.ca/historical_data/search_historic_data_e.html
 
-library(tidyverse)
+library(dplyr)
+library(purrr)
 library(httr)
-library(jsonlite)
+# library(jsonlite)
 library(rvest)
-library(zoo)
-library(data.table)
 
 base_url <- "http://climate.weather.gc.ca/climate_data/daily_data_e.html?&timeframe=2&StationID="
+
+last_year <- as.numeric(format(Sys.Date(), "%Y")) - 1
 
 years5097 <- rep(2008:2013, each = 12)
 months5097 <- rep(1:12, times = 6)
 
-years51459 <- rep(2014:2018, each = 12)
-months51459 <- rep(1:12, times = 5)
+years51459 <- rep(2014:last_year, each = 12)
+months51459 <- rep(1:12, times = last_year - 2014 + 1)
 
 # Climate Canada changes the station ID of Pearson airport from 5097 to 51459 at the
 # beginning of 2014
@@ -36,6 +37,7 @@ weather_df5097 <- map2(years5097, months5097,
   bind_rows(.)
 
 # Station ID 51459
+
 weather_df51459 <- map2(years51459, months51459,
                        ~read_html(paste0(base_url, "51459&Year=", .x, "&Month=", .y, "#")) %>%
                          html_table(fill = TRUE) %>%
