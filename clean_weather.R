@@ -60,7 +60,9 @@ weather <- bind_rows(weather_df5097, weather_df51459) %>%
   mutate_at(.vars = vars(-Date),
             .funs = funs(gsub("LegendEE", "",
                               gsub("LegendMM", "",
-                                   gsub("LegendTT", "0.0", .)))))
+                                   gsub("LegendTT", "0.0", .))))) %>%
+  mutate_at(.vars = vars(-Date, -`Gust Dir`, -`Gust Speed`),
+            .funs = funs(as.numeric(.)))
 
 rm(base_url, years5097, years51459, months5097, months51459, 
    weather_df5097, weather_df51459)
