@@ -19,17 +19,13 @@ shinyUI(fluidPage(
                          choices = c("Yes", "No"),
                          selected = c("Yes", "No")),
       
-      selectInput("auto_type", label = "Involved Vehicles",
+      selectInput("auto_type", label = "Vehicles Involved",
                   choices = c("Automobile", "Pedestrian", "Bicycle", "Motorcycle", 
-                              "Truck", "Emergency Vehicle"),
+                              "Truck", "Transit Vehicle", "Emergency Vehicle"),
                   selected = c("Automobile"), multiple = TRUE),
       
       selectInput("precip", label = "Weather Condition",
                   choices = c("Rain", "Snow"), 
-                  selected = NULL, multiple = TRUE),
-      
-      selectInput("visib", label = "Visibility",
-                  choices = c("Clear", "Not Clear"),
                   selected = NULL, multiple = TRUE),
       
       selectInput("road_class", label = "Road Class",
