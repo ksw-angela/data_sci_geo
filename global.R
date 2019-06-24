@@ -27,15 +27,16 @@ accidents <- ksi %>%
                                                         "Minor Arterial"), "Arterial",
                                       ROAD_CLASS)))
 
-rm(weather, ksi)
-
-##### LABELS #####
-
 # Number of parties involved in an accident as well as number of fatalities
 per_accident <- accidents %>%
   group_by(ACCNUM) %>%
-  summarize(parties_involved = n(),
-            num_fatalities = sum(ACCLASS == "Fatal"))
+  summarize(Involved = n(),
+            Fatalities = sum(ACCLASS == "Fatal"))
+
+accidents <- accidents %>%
+  left_join(per_accident, by = c("ACCNUM" = "ACCNUM"))
+
+rm(weather, ksi, per_accident)
 
 # Color scheme for map
 pal2 <- colorFactor(palette = c('darkorchid', 'darkturquoise'), domain = accidents$ACCLASS)
