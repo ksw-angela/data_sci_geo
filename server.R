@@ -47,7 +47,7 @@ shinyServer(function(input, output) {
     filtered_accidents() %>%
       group_by(ACCNUM) %>%
       summarize_at(.vars = vars(LONGITUDE, LATITUDE, ACCLASS, Date, 
-                                STREET1, STREET2),
+                                STREET1, STREET2, Involved, Fatalities),
                    .funs = funs(unique(.)))
   })
   
@@ -57,7 +57,8 @@ shinyServer(function(input, output) {
            filtered_plot_accidents()$Date, "<br/>", 
            filtered_plot_accidents()$STREET1, ", ",
            filtered_plot_accidents()$STREET2, "<br/>",
-           "Parties involved:", filtered_plot_accidents()$parties_involved)
+           "Parties involved: ", filtered_plot_accidents()$Involved, "<br/>",
+           "Fatalities: ", filtered_plot_accidents()$Fatalities)
   })
   
   # Leaflet map - Leaflet adds interactivity to map
