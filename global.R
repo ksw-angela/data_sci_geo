@@ -4,14 +4,24 @@ library(rgdal)
 library(zoo)
 library(lubridate)
 
-source("clean_ksi.R")
-source("clean_weather.R")
+# For data fidelity and speed instead of a loading the entire script the data file
+# was uploaded to github
+
+ksi <- readRDS("www/ksi.rds")
+weather <- readRDS("www/weather.rds")
+
+# Function used to capitalize first letter in each word
+simpleCap <- function(x) {
+  gsub("(?<=\\b)([a-z])", "\\U\\1", tolower(x), perl=TRUE)
+}
 
 accidents <- ksi %>%
   filter(ACCLASS != "Property Damage Only") %>%
   mutate(Date = as.Date(as.POSIXct(Date_Time, "GMT"))) %>%
   left_join(weather, by = c("Date" = "Date")) %>%
   mutate(fatal = if_else(ACCLASS == "Fatal", "Yes", "No"),
+         STREET1 = simpleCap(STREET1),
+         STREET2 = simpleCap(STREET2),
          TRAFFCTL = if_else(TRAFFCTL %in% c("Police Control", "School Guard",
                                             "Traffic Controller"), "Human Control",
                             if_else(TRAFFCTL %in% c("Stop Sign", "Traffic Signal",
