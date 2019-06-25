@@ -1,5 +1,6 @@
 library(shiny)
 library(shinythemes)
+library(shinycssloaders)
 
 shinyUI(fluidPage(
   theme = shinytheme("simplex"),
@@ -45,17 +46,16 @@ shinyUI(fluidPage(
     mainPanel(
       tabsetPanel(type = "tabs",
                   tabPanel("Interactive Map", 
-                           leafletOutput("acc_map"), 
+                           leafletOutput("acc_map") %>% withSpinner(color = "#FF3333"), 
                            dataTableOutput("acc_data"))
                   ,
                   tabPanel("Summary",
-                           plotlyOutput("acc_plot_full"),
-                           br(), br(), 
-                           plotlyOutput("acc_plot_full_prop"),
-                           br(), br(),
-                           plotlyOutput("acc_plot_month"),
-                           br(), br(), 
-                           plotlyOutput("acc_plot_month_prop"))
+                           column(7, plotlyOutput("acc_plot_full"), 
+                                  br(), br(),
+                                  plotlyOutput("acc_plot_month")),
+                           column(5, plotlyOutput("acc_plot_full_prop"),
+                                  br(), br(),
+                                  plotlyOutput("acc_plot_month_prop")))
                   ,
                   tabPanel("Frequency Tables",
                            plotlyOutput("impact_type_plot"),
