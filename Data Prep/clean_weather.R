@@ -5,7 +5,6 @@
 library(dplyr)
 library(purrr)
 library(httr)
-# library(jsonlite)
 library(rvest)
 
 base_url <- "http://climate.weather.gc.ca/climate_data/daily_data_e.html?&timeframe=2&StationID="
@@ -22,6 +21,8 @@ months51459 <- rep(1:12, times = last_year - 2014 + 1)
 # beginning of 2014
 
 # Station ID 5097
+# user  system elapsed 
+# 5.50    0.12   50.99 
 weather_df5097 <- map2(years5097, months5097,
                        ~read_html(paste0(base_url, "5097&Year=", .x, "&Month=", .y, "#")) %>%
                          html_table(fill = TRUE) %>%
@@ -37,7 +38,8 @@ weather_df5097 <- map2(years5097, months5097,
   bind_rows(.)
 
 # Station ID 51459
-
+# user  system elapsed 
+# 4.85    0.06   50.43 
 weather_df51459 <- map2(years51459, months51459,
                        ~read_html(paste0(base_url, "51459&Year=", .x, "&Month=", .y, "#")) %>%
                          html_table(fill = TRUE) %>%
@@ -64,5 +66,5 @@ weather <- bind_rows(weather_df5097, weather_df51459) %>%
   mutate_at(.vars = vars(-Date, -`Gust Dir`, -`Gust Speed`),
             .funs = funs(as.numeric(.)))
 
-rm(base_url, years5097, years51459, months5097, months51459, 
+rm(base_url, last_year, years5097, years51459, months5097, months51459, 
    weather_df5097, weather_df51459)
