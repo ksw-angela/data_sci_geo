@@ -112,7 +112,7 @@ shinyServer(function(input, output) {
       arrange(Date, Accident)})
   
   
-  ### FREQUENCY TABLES TAB
+  ### SUMMARY TAB
   
   # Data displayed as plotly graphs in `Frequency Tables` tab
   plotlydata <- reactive({
