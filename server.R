@@ -93,6 +93,9 @@ shinyServer(function(input, output) {
                filter(LATITUDE == input$acc_map_click[1] & 
                         LONGITUDE == input$acc_map_click[2]))
     }
+    else if(input$action){
+      return(filtered_accidents())
+    }
     else{
       return(filtered_accidents())
     }
@@ -131,7 +134,7 @@ shinyServer(function(input, output) {
     
     p <- ggplot(data, aes(x = Date, y = num, col = ACCLASS)) +
       geom_point(aes(text = paste(month.abb[month], year, "<br><b>", 
-                                  "Number of Accidents:</b>", num)), 
+                                  "Accidents:</b>", num)), 
                  alpha = 0.8) + ylab("Number of Accidents") + xlab("Date") + 
       labs(color = "Accident Class") + ggtitle("Number of Accidents by Month") + 
       theme_minimal()
@@ -169,7 +172,7 @@ shinyServer(function(input, output) {
 
     p <- ggplot(data, aes(x = month, y = num, col = ACCLASS)) +
       geom_point(aes(text = paste(month.abb[month], "<br><b>",
-                                  "Number of Accidents (Normalized):</b>", num)), alpha = 0.8) +
+                                  "Accidents (Normalized):</b>", num)), alpha = 0.8) +
       geom_line() + ylab("Number of Accidents (Normalized)") + xlab("Month") +
       labs(color = "Accident Class") + scale_x_continuous(breaks = round(seq(1, 12, by = 1))) +
       ggtitle("Number of Accidents Assuming 30 Day Months") + theme_minimal()
@@ -189,11 +192,13 @@ shinyServer(function(input, output) {
 
     p <- ggplot(data, aes(x = month, y = num)) +
       geom_point(aes(text = paste(month.abb[month], "<br><b>",
-                                  "Proportion of Fatalities (Normalized):</b>", 
+                                  "% Fatal (Normalized):</b>", 
                                   round(num * 100, 2), "%")), alpha = 0.8) +
-      geom_line() + ylab("% Fatal (Normalized)") + xlab("Month") +
-      labs(color = "Accident Class") + scale_x_continuous(breaks = round(seq(1, 12, by = 1))) +
-      ggtitle("Proportion of Fatal Accidents Assuming 30 Day Months") + theme_minimal()
+      geom_line() + ylab("Fatal (Normalized)") + xlab("Month") +
+      labs(color = "Accident Class") + 
+      scale_x_continuous(breaks = round(seq(1, 12, by = 1))) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+      ggtitle("% Fatal Accidents Assuming 30 Day Months") + theme_minimal()
 
     ggplotly(p, tooltip = "text")
   })
