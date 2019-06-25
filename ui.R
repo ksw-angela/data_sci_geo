@@ -48,15 +48,21 @@ shinyUI(fluidPage(
                            leafletOutput("acc_map"), 
                            dataTableOutput("acc_data"))
                   ,
-                  tabPanel("Frequency Tables",
+                  tabPanel("Summary",
                            plotlyOutput("acc_plot_full"),
+                           br(), br(), 
                            plotlyOutput("acc_plot_full_prop"),
-                           br(),
+                           br(), br(),
                            plotlyOutput("acc_plot_month"),
-                           plotlyOutput("acc_plot_month_prop"),
-                           br(), 
-                           verbatimTextOutput("plotlyclick"),
-                           dataTableOutput("acc_data2")))
-    )
-  ))
-)
+                           br(), br(), 
+                           plotlyOutput("acc_plot_month_prop"))
+                  ,
+                  tabPanel("Frequency Tables",
+                           plotlyOutput("impact_type_plot"),
+                           br(), br(),
+                           plotlyOutput("age_plot"),
+                           br(), br(),
+                           plotlyOutput("driver_action_plot"))
+      )
+    ))
+))
