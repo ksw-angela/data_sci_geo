@@ -1,3 +1,4 @@
+library(dplyr)
 library(leaflet)
 library(plotly)
 library(rgdal)
