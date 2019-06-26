@@ -203,4 +203,38 @@ shinyServer(function(input, output) {
     ggplotly(p, tooltip = "text")
   })
   
+  
+  ### FREQUENCY TABLES TAB
+  
+  # Interactive plot of collisions by impact type
+  output$impact_type_plot <- renderPlotly({
+    impact_type_order <- plotlydata() %>%
+      group_by(IMPACTYPE) %>%
+      summarize(count = n()) %>%
+      arrange(desc(count))
+    
+    data <- plotlydata() %>%
+      mutate(IMPACTYPE = factor(IMPACTYPE, levels = impact_type_order$IMPACTYPE))
+    
+    p <- ggplot(data, aes(x = IMPACTYPE, fill = ACCLASS)) + geom_bar() +
+      xlab("Impact Type") + ylab("Number of Accidents") + 
+      scale_x_discrete(labels = c("Angle" = "Angle", "Approaching" = "Approaching", 
+                                  "Cyclist Collisions" = "Cyclist", "Other" = "Other",
+                                  "Pedestrian Collisions" = "Pedestrian", 
+                                  "Rear End" = "Rear", "Sideswipe" = "Side",
+                                  "SMV Other" = "SMV Other", 
+                                  "SMV Unattended Vehicle" = "Unattended",
+                                  "Turning Movement" = "Turning")) +
+      ggtitle("Accidents by Impact Type") + theme_minimal()
+    
+    ggplotly(p)
+  })
+  
+  # Interactive plot of collisions by age and vehicle driven
+  
+  # Interactive plot of collisions by driver action
+  
+  # Interactive plot of collisions by age and driver condition
+  
+  
 })
