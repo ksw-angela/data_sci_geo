@@ -62,7 +62,9 @@ shinyUI(fluidPage(
                            br(), br(),
                            plotlyOutput("age_plot"),
                            br(), br(),
-                           plotlyOutput("driver_action_plot"))
+                           plotlyOutput("veh_type_plot"),
+                           br(), br(),
+                           plotlyOutput("driv_action_plot"))
       )
     ))
 ))
