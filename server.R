@@ -104,7 +104,7 @@ shinyServer(function(input, output) {
   # Data displayed as a data table
   output$acc_data <- renderDataTable({
     filtered_table_accidents() %>%
-      select(Accident = ACCNUM, `Accident Class` = ACCLASS, Date = Date_Time,
+      select(Accident = ACCNUM, `Accident Class` = ACCLASS, Date = Date,
              `Street 1` = STREET1, `Street 2` = STREET2,
              Person = INVTYPE, Age = INVAGE, Injury = INJURY, Vehicle = VEHTYPE,
              Manoeuver = MANOEUVER, `Driver Action` = DRIVACT,
@@ -135,7 +135,8 @@ shinyServer(function(input, output) {
     p <- ggplot(data, aes(x = Date, y = num, col = ACCLASS)) +
       geom_point(aes(text = paste(month.abb[month], year, "<br><b>", 
                                   "Accidents:</b>", num)), 
-                 alpha = 0.8) + ylab("Number of Accidents") + xlab("Date") + 
+                 alpha = 0.8) + stat_smooth(se = F) +
+      ylab("Number of Accidents") + xlab("Date") + 
       labs(color = "Accident Class") + ggtitle("Number of Accidents by Month") + 
       theme_minimal()
     
@@ -154,6 +155,7 @@ shinyServer(function(input, output) {
       geom_point(aes(text = paste(month.abb[month], year, "<br><b>", 
                                   "Fatal:</b>",
                                   round(perc_fatal * 100, 2), "%")), alpha = 0.8) +
+      stat_smooth(se = F) + 
       ylab("% Fatal") + xlab("Date") + labs(color = "Accident Class") + 
       ggtitle("Proportion of Fatal Accidents by Month") + theme_minimal()
 
@@ -206,6 +208,19 @@ shinyServer(function(input, output) {
   
   ### FREQUENCY TABLES TAB
   
+  # Interactive plot of collisions by impact type, age, vehicle type, and
+  # driver action
+  # output$collision_by <- renderPlotly({
+  #   p <- plot_ly(type = "histogram") %>%
+  #     add_trace(plotlydata()$IMPACTYPE, name = "Impact Type", type = "histogram") %>%
+  #     add_trace(plotlydata()$INVAGE, name = "Age", type = "histogram") %>%
+  #     add_trace(plotlydata()$VEHTYPE, name = "Vehicle Type", type = "histogram") %>%
+  #     add_trace(plotlydata()$DRIVACT, name = "Driver Action", type = "histogram") %>%
+  #     layout(title = "Collision by Impact Type",
+  #            xaxis = list(title = "Impact Type"),
+  #            yaxis = list(title = "Number of Accidents"))
+  # })
+  # 
   # Interactive plot of collisions by impact type
   output$impact_type_plot <- renderPlotly({
     impact_type_order <- plotlydata() %>%
@@ -225,14 +240,38 @@ shinyServer(function(input, output) {
                                   "SMV Other" = "SMV Other", 
                                   "SMV Unattended Vehicle" = "Unattended",
                                   "Turning Movement" = "Turning")) +
+      labs(fill = "Accident Class") +
       ggtitle("Accidents by Impact Type") + theme_minimal()
     
     ggplotly(p)
   })
   
-  # Interactive plot of collisions by age and vehicle driven
+  # Interactive plot of collisions by age
+  output$age_plot <- renderPlotly({
+    p <- ggplot(plotlydata(), aes(x = INVAGE, fill = ACCLASS)) + geom_bar() +
+      xlab("Age of Person Involved") + ylab("Number of Accidents") + 
+      ggtitle("Accidents by Age") + theme_minimal()
+    
+    ggplotly(p)
+  })
+  
+  # Interactive plot of collisions by vehicle type
+  output$veh_type_plot <- renderPlotly({
+    p <- ggplot(plotlydata(), aes(x = VEHTYPE, fill = ACCLASS)) + geom_bar() +
+      xlab("Vehicle Type") + ylab("Number of Accidents") + 
+      ggtitle("Accidents by Vehicle Type") + theme_minimal()
+    
+    ggplotly(p)
+  })
   
   # Interactive plot of collisions by driver action
+  output$driv_action_plot <- renderPlotly({
+    p <- ggplot(plotlydata(), aes(x = DRIVACT, fill = ACCLASS)) + geom_bar() +
+      xlab("Driver Action") + ylab("Number of Accidents") + 
+      ggtitle("Accidents by Driver Action") + theme_minimal()
+    
+    ggplotly(p)
+  })
   
   # Interactive plot of collisions by age and driver condition
   
