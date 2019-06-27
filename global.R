@@ -43,7 +43,9 @@ accidents <- ksi %>%
                                             "45 to 49", "50 to 54", "55 to 59",
                                             "60 to 64", "65 to 69", "70 to 74",
                                             "75 to 79", "80 to 84", "85 to 89", 
-                                            "90 to 94", "Over 95", "unknown")))
+                                            "90 to 94", "Over 95", "unknown")),
+         VEHTYPE = if_else(VEHTYPE == " ", "NA", VEHTYPE),
+         DRIVACT = if_else(DRIVACT == " ", "NA", DRIVACT))
 
 # Number of parties involved in an accident as well as number of fatalities
 per_accident <- accidents %>%
