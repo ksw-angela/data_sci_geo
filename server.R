@@ -255,25 +255,40 @@ shinyServer(function(input, output) {
     ggplotly(p)
   })
   
-  # Interactive plot of collisions by vehicle type
+  # Interactive plot of collisions by top 8 vehicle types
   output$veh_type_plot <- renderPlotly({
-    p <- ggplot(plotlydata(), aes(x = VEHTYPE, fill = ACCLASS)) + geom_bar() +
+    veh_type_order <- plotlydata() %>%
+      group_by(VEHTYPE) %>%
+      summarize(count = n()) %>%
+      arrange(desc(count)) %>%
+      filter(row_number() <= 8)
+    
+    data <- plotlydata() %>%
+      filter(VEHTYPE %in% veh_type_order$VEHTYPE) %>%
+      mutate(VEHTYPE = factor(VEHTYPE, levels = veh_type_order$VEHTYPE))
+    
+    p <- ggplot(data, aes(x = VEHTYPE, fill = ACCLASS)) + geom_bar() +
       xlab("Vehicle Type") + ylab("Number of Accidents") + 
-      ggtitle("Accidents by Vehicle Type") + theme_minimal()
+      ggtitle("Accidents by Top 8 Vehicle Types") + theme_minimal()
     
     ggplotly(p)
   })
   
   # Interactive plot of collisions by driver action
   output$driv_action_plot <- renderPlotly({
-    p <- ggplot(plotlydata(), aes(x = DRIVACT, fill = ACCLASS)) + geom_bar() +
-      xlab("Driver Action") + ylab("Number of Accidents") + 
+    driv_action_order <- plotlydata() %>%
+      group_by(DRIVACT) %>%
+      summarize(count = n()) %>%
+      arrange(count)
+    
+    data <- plotlydata() %>%
+      mutate(DRIVACT = factor(DRIVACT, levels = driv_action_order$DRIVACT))
+    
+    p <- ggplot(data, aes(x = DRIVACT, fill = ACCLASS)) + geom_bar() +
+      coord_flip() + xlab("Driver Action") + ylab("Number of Accidents") + 
       ggtitle("Accidents by Driver Action") + theme_minimal()
     
     ggplotly(p)
   })
-  
-  # Interactive plot of collisions by age and driver condition
-  
   
 })
